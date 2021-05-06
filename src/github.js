@@ -1,0 +1,57 @@
+"use strict";
+
+function getBranch() {
+  try {
+    const ref = process.env.GITHUB_REF;
+    if (ref.startsWith("refs/heads")) {
+      return ref.split("/").slice(2).join("/");
+    }
+    return "";
+  } catch (e) {
+    return "";
+  }
+}
+
+async function getExistingFile(client, { owner, repo, path, branch }) {
+  try {
+    const resp = await client.repos.getContent({
+      owner,
+      repo,
+      path,
+      ref: branch,
+    });
+    return {
+      exists: true,
+      sha: resp.data.sha,
+      content: resp.data.content.replace(/\n/g, ""),
+    };
+  } catch (e) {
+    return { exists: false, sha: null, content: null };
+  }
+}
+
+async function writeFileToRepo(client, { owner, repo, content, path, branch }) {
+  const existingFile = await getExistingFile(client, {
+    owner,
+    repo,
+    path,
+    branch,
+  });
+  const payload = { owner, repo, content, path, branch };
+  if (existingFile.exists === true) {
+    payload.sha = existingFile.sha;
+    payload.message = `update ${path}`;
+  } else {
+    payload.message = `create ${path}`;
+  }
+  if (content !== existingFile.content) {
+    await client.repos.createOrUpdateFileContents(payload);
+    return true;
+  }
+  return false;
+}
+
+module.exports = {
+  getBranch,
+  writeFileToRepo,
+};

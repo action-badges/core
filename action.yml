@@ -1,0 +1,33 @@
+name: 'Action Badges Core Action'
+description: 'Create SVG badges with GitHub actions'
+branding:
+  icon: 'info'
+  color: 'blue'
+inputs:
+  github-token:
+    description: 'GITHUB_TOKEN secret'
+    required: true
+  file-name:
+    description: 'Name of the SVG badge file to write'
+    required: true
+  badge-branch:
+    description: 'Branch to store SVG badges on (uses your default branch if not supplied)'
+    required: false
+  label:
+    description: 'Badge label'
+    required: false
+  label-color:
+    description: 'Label color'
+    required: false
+  message:
+    description: 'Badge message'
+    required: false
+  message-color:
+    description: 'Message color'
+    required: false
+  style:
+    description: "One of: 'plastic', 'flat', 'flat-square', 'for-the-badge' or 'social'"
+    required: false
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

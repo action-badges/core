@@ -1,0 +1,36 @@
+{
+  "name": "@action-badges/core",
+  "version": "0.1.0",
+  "description": "Create SVG badges with GitHub actions",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "ncc build src/action.js -o dist --minify",
+    "lint": "eslint \"src/**/*.js\"",
+    "prettier": "prettier --write \"src/**/*.js\"",
+    "prettier:check": "prettier --check \"src/**/*.js\"",
+    "test": "echo \"TODO: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/action-badges/core.git"
+  },
+  "homepage": "https://github.com/action-badges/core",
+  "author": "chris48s",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.7",
+    "@actions/github": "^4.0.0",
+    "badge-maker": "^3.3.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.28.5",
+    "eslint": "^7.25.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-mocha": "^8.1.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.2.1"
+  },
+  "engines": {
+    "node": ">= 12"
+  }
+}
