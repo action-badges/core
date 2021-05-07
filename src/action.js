@@ -1,6 +1,6 @@
 "use strict";
 
-const { BaseAction, invoke } = require("./lib");
+const { BaseAction, invoke } = require("./index");
 
 class StaticAction extends BaseAction {
   async render() {
