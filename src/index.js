@@ -3,7 +3,7 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const { getBadgeObject, getBadgeSvg } = require("./badge");
-const { getBranch, writeFileToRepo } = require("./github");
+const githubHelper = require("./github");
 
 async function writeBadge(params) {
   const badgeObj = getBadgeObject(params);
@@ -15,12 +15,12 @@ async function writeBadge(params) {
   const token = core.getInput("github-token", { required: true });
   const filename = core.getInput("file-name", { required: true });
   const badgeBranch = core.getInput("badge-branch") || undefined;
-  const actionBranch = getBranch();
+  const actionBranch = githubHelper.getBranch();
   const subDir = actionBranch ? `.badges/${actionBranch}` : ".badges";
   const path = `${subDir}/${filename}`;
   const client = github.getOctokit(token);
 
-  const changed = await writeFileToRepo(client, {
+  const changed = await githubHelper.writeFileToRepo(client, {
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     content: Buffer.from(svg).toString("base64"),
@@ -54,9 +54,10 @@ async function invoke(Cls) {
   }
 
   const obj = new Cls();
+  const rendered = await obj.render();
 
   try {
-    await writeBadge({ ...{ label: obj.label }, ...(await obj.render()) });
+    await writeBadge({ ...{ label: obj.label }, ...rendered });
   } catch (e) {
     await writeBadge({
       label: obj.label,
