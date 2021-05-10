@@ -11,7 +11,7 @@ class GoodTestAction extends BaseAction {
     return "build";
   }
   render() {
-    return { label: "passing" };
+    return { message: "passing" };
   }
 }
 
@@ -64,6 +64,9 @@ describe("invoke", function () {
     process.env["INPUT_FILE-NAME"] = "badge.svg";
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
 
+    const getDefaultBranch = sinon
+      .stub(github, "getDefaultBranch")
+      .returns("main");
     const writeFileToRepo = sinon.stub(github, "writeFileToRepo");
     writeFileToRepo.onCall(0).throws();
     writeFileToRepo.onCall(1).returns(true);
@@ -71,6 +74,7 @@ describe("invoke", function () {
 
     await invoke(GoodTestAction);
 
+    assert.strictEqual(2, getDefaultBranch.callCount);
     assert.strictEqual(2, writeFileToRepo.callCount);
     assert(setFailed.calledOnce);
   });
@@ -80,11 +84,15 @@ describe("invoke", function () {
     process.env["INPUT_FILE-NAME"] = "badge.svg";
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
 
+    const getDefaultBranch = sinon
+      .stub(github, "getDefaultBranch")
+      .returns("main");
     const writeFileToRepo = sinon.stub(github, "writeFileToRepo").returns(true);
     const setFailed = sinon.spy(core, "setFailed");
 
     await invoke(GoodTestAction);
 
+    assert(getDefaultBranch.calledOnce);
     assert(writeFileToRepo.calledOnce);
     assert(setFailed.notCalled);
 
@@ -92,10 +100,15 @@ describe("invoke", function () {
     assert.strictEqual("owner", args.owner);
     assert.strictEqual("repo", args.repo);
     assert.strictEqual(".badges/badge.svg", args.path);
-    assert.strictEqual(undefined, args.branch);
+    assert.strictEqual("main", args.branch);
     assert.match(args.content, /^[a-zA-Z0-9+/\r\n]+={0,2}$/);
 
     assert(logs.includes("Wrote .badges/badge.svg"));
+    assert(
+      logs.includes(
+        "![build](https://raw.githubusercontent.com/owner/repo/main/.badges/badge.svg)"
+      )
+    );
   });
 
   it("respects branch params", async function () {
@@ -105,11 +118,15 @@ describe("invoke", function () {
     process.env["INPUT_BADGE-BRANCH"] = "badge-branch";
     process.env["GITHUB_REF"] = "refs/heads/main";
 
+    const getDefaultBranch = sinon
+      .stub(github, "getDefaultBranch")
+      .returns("main");
     const writeFileToRepo = sinon.stub(github, "writeFileToRepo").returns(true);
     const setFailed = sinon.spy(core, "setFailed");
 
     await invoke(GoodTestAction);
 
+    assert(getDefaultBranch.calledOnce);
     assert(writeFileToRepo.calledOnce);
     assert(setFailed.notCalled);
 
@@ -119,5 +136,10 @@ describe("invoke", function () {
     assert.strictEqual("badge-branch", args.branch);
 
     assert(logs.includes("Wrote .badges/main/badge.svg"));
+    assert(
+      logs.includes(
+        "![build](https://raw.githubusercontent.com/owner/repo/badge-branch/.badges/main/badge.svg)"
+      )
+    );
   });
 });

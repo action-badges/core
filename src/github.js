@@ -12,6 +12,14 @@ function getBranch() {
   }
 }
 
+async function getDefaultBranch(client, { owner, repo }) {
+  const resp = await client.request("GET /repos/{owner}/{repo}", {
+    owner,
+    repo,
+  });
+  return resp.data.default_branch;
+}
+
 async function getExistingFile(client, { owner, repo, path, branch }) {
   try {
     const resp = await client.repos.getContent({
@@ -53,5 +61,6 @@ async function writeFileToRepo(client, { owner, repo, content, path, branch }) {
 
 module.exports = {
   getBranch,
+  getDefaultBranch,
   writeFileToRepo,
 };
