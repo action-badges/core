@@ -1,0 +1,11 @@
+.github/*
+
+**/*.spec.js
+
+.eslintrc.json
+.nycrc
+.nyc_output/*
+coverage/*
+
+action.yml
+dist/*
