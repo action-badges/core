@@ -14,19 +14,19 @@ inputs:
     description: 'Branch to store SVG badges on (uses your default branch if not supplied)'
     required: false
   label:
-    description: 'Badge label'
+    description: 'Badge label text'
     required: false
   label-color:
     description: 'Label color'
     required: false
   message:
-    description: 'Badge message'
+    description: 'Badge message text'
     required: false
   message-color:
     description: 'Message color'
     required: false
   style:
-    description: "One of: 'plastic', 'flat', 'flat-square', 'for-the-badge' or 'social'"
+    description: "One of: 'flat', 'flat-square', 'plastic', 'for-the-badge' or 'social'"
     required: false
 runs:
   using: 'node12'
