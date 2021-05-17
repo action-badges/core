@@ -1,5 +1,7 @@
 # action-badges/core
 
+Serverless badge generation with Github Actions
+
 [![Run tests](https://github.com/action-badges/core/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/action-badges/core/actions/workflows/test.yml) [![Build Dist](https://github.com/action-badges/core/actions/workflows/build-dist.yml/badge.svg?branch=main)](https://github.com/action-badges/core/actions/workflows/build-dist.yml)
 
 Action badges allows you to create custom badges using github actions and host them in your own github repo.
