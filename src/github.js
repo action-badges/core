@@ -22,7 +22,7 @@ async function getDefaultBranch(client, { owner, repo }) {
 
 async function getExistingFile(client, { owner, repo, path, branch }) {
   try {
-    const resp = await client.repos.getContent({
+    const resp = await client.rest.repos.getContent({
       owner,
       repo,
       path,
@@ -53,7 +53,7 @@ async function writeFileToRepo(client, { owner, repo, content, path, branch }) {
     payload.message = `create ${path}`;
   }
   if (content !== existingFile.content) {
-    await client.repos.createOrUpdateFileContents(payload);
+    await client.rest.repos.createOrUpdateFileContents(payload);
     return true;
   }
   return false;
