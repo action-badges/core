@@ -28,7 +28,9 @@ describe("writeFileToRepo", function () {
   it("creates file if file does not exist", async function () {
     const getContent = sinon.stub().throws();
     const createOrUpdateFileContents = sinon.spy();
-    const client = { repos: { getContent, createOrUpdateFileContents } };
+    const client = {
+      rest: { repos: { getContent, createOrUpdateFileContents } },
+    };
 
     assert.strictEqual(
       true,
@@ -58,7 +60,9 @@ describe("writeFileToRepo", function () {
       .stub()
       .returns({ data: { sha: "abc123", content: "c29tZXRoaW5nIGVsc2U=" } });
     const createOrUpdateFileContents = sinon.spy();
-    const client = { repos: { getContent, createOrUpdateFileContents } };
+    const client = {
+      rest: { repos: { getContent, createOrUpdateFileContents } },
+    };
 
     assert.strictEqual(
       true,
@@ -89,7 +93,9 @@ describe("writeFileToRepo", function () {
       .stub()
       .returns({ data: { sha: "abc123", content: "PHN2Zy4uLg==" } });
     const createOrUpdateFileContents = sinon.spy();
-    const client = { repos: { getContent, createOrUpdateFileContents } };
+    const client = {
+      rest: { repos: { getContent, createOrUpdateFileContents } },
+    };
 
     assert.strictEqual(
       false,
