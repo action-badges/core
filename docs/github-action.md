@@ -18,7 +18,7 @@ jobs:
 
       # badges can use static values
       - name: Make Black Code Style badge
-        uses: action-badges/core@0.1.0
+        uses: action-badges/core@0.1.1
         with:
           label: code style
           message: black
@@ -29,7 +29,7 @@ jobs:
       ## ..or you can generate them dynamically
       - run: echo "github_sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Make Latest Commit badge
-        uses: action-badges/core@0.1.0
+        uses: action-badges/core@0.1.1
         with:
           label: latest commit
           message: "${{ env.github_sha_short }}"
