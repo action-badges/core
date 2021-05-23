@@ -25,3 +25,12 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           file: ./coverage/cobertura-coverage.xml
+
+      - name: Write coverage badge
+        uses: action-badges/cobertura-coverage-xml-badges@0.1.0
+        if: github.ref == 'refs/heads/main'
+        with:
+          badge-branch: badges
+          file-name: coverage.svg
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          coverage-file-name: ./coverage/cobertura-coverage.xml
