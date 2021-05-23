@@ -33,7 +33,7 @@ jobs:
           file: ./coverage/cobertura-coverage.xml
 
       - name: Write Coverage badge
-        uses: action-badges/cobertura-coverage-xml-badges@0.1.0
+        uses: action-badges/cobertura-coverage-xml-badges@main
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           badge-branch: badges
