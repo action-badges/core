@@ -32,7 +32,7 @@ jobs:
         with:
           file: ./coverage/cobertura-coverage.xml
 
-      - name: Write coverage badge
+      - name: Write Coverage badge
         uses: action-badges/cobertura-coverage-xml-badges@0.1.0
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
@@ -41,7 +41,7 @@ jobs:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           coverage-file-name: ./coverage/cobertura-coverage.xml
 
-      - name: Make Build Status badge
+      - name: Write Build Status badge
         if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: action-badges/core@main
         with:
