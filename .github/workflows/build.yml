@@ -74,3 +74,26 @@ jobs:
           git add dist/
           git commit -m "update dist" || exit 0
           git push origin main
+
+  package-json-badges:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Write License badge
+        uses: action-badges/package-json-badges@main
+        with:
+          badge-branch: badges
+          file-name: package-license.svg
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          integration: license
+
+      - name: Write Node Version badge
+        uses: action-badges/package-json-badges@main
+        with:
+          badge-branch: badges
+          file-name: package-node-version.svg
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          integration: node-version
