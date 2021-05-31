@@ -4,6 +4,7 @@ Serverless badge generation with Github Actions
 
 ![build](https://raw.githubusercontent.com/action-badges/core/badges/.badges/main/build-status.svg)
 ![coverage](https://raw.githubusercontent.com/action-badges/core/badges/.badges/main/coverage.svg)
+![version](https://raw.githubusercontent.com/action-badges/core/badges/.badges/main/package-version.svg)
 ![license](https://raw.githubusercontent.com/action-badges/core/badges/.badges/main/package-license.svg)
 ![node](https://raw.githubusercontent.com/action-badges/core/badges/.badges/main/package-node-version.svg)
 

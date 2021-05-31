@@ -101,3 +101,11 @@ jobs:
           file-name: package-node-version.svg
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           integration: node-version
+
+      - name: Make version Badge
+        uses: action-badges/package-json-badges@main
+        with:
+          badge-branch: badges
+          file-name: package-version.svg
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          integration: version
