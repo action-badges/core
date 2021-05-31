@@ -142,4 +142,33 @@ describe("invoke", function () {
       )
     );
   });
+
+  it("does not write anything if render() returns nothing", async function () {
+    process.env["INPUT_GITHUB-TOKEN"] = "f00ba2";
+    process.env["INPUT_FILE-NAME"] = "badge.svg";
+    process.env["GITHUB_REPOSITORY"] = "owner/repo";
+
+    const getDefaultBranch = sinon
+      .stub(github, "getDefaultBranch")
+      .returns("main");
+    const writeFileToRepo = sinon.stub(github, "writeFileToRepo").returns(true);
+    const setFailed = sinon.spy(core, "setFailed");
+
+    [null, undefined].forEach(async function (value) {
+      class NullTestAction extends BaseAction {
+        get label() {
+          return "build";
+        }
+        render() {
+          return value;
+        }
+      }
+
+      await invoke(NullTestAction);
+
+      assert(getDefaultBranch.notCalled);
+      assert(writeFileToRepo.notCalled);
+      assert(setFailed.notCalled);
+    });
+  });
 });

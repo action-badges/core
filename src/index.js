@@ -69,6 +69,9 @@ async function invoke(Cls) {
 
   const obj = new Cls();
   const rendered = await obj.render();
+  if (rendered == null) {
+    return;
+  }
 
   try {
     await writeBadge({ ...{ label: obj.label }, ...rendered });
