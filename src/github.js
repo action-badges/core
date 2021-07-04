@@ -1,5 +1,32 @@
 "use strict";
 
+async function createOrphanBranch(client, { owner, repo, branch }) {
+  console.log("createOrphanBranch");
+  const SHA1_EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
+  const res = await client.request("POST /repos/{owner}/{repo}/git/commits", {
+    owner,
+    repo,
+    message: "init orphan branch",
+    tree: SHA1_EMPTY_TREE,
+    parents: [],
+  });
+  await client.request("POST /repos/{owner}/{repo}/git/refs", {
+    owner,
+    repo,
+    ref: `refs/heads/${branch}`,
+    sha: res.data.sha,
+  });
+}
+
+async function initOrphanBranch(client, { owner, repo, branch }) {
+  console.log("initOrphanBranch");
+  try {
+    await client.rest.repos.getBranch({ owner, repo, branch });
+  } catch (e) {
+    await createOrphanBranch(client, { owner, repo, branch });
+  }
+}
+
 function getBranch() {
   try {
     const ref = process.env.GITHUB_REF;
@@ -39,6 +66,7 @@ async function getExistingFile(client, { owner, repo, path, branch }) {
 }
 
 async function writeFileToRepo(client, { owner, repo, content, path, branch }) {
+  await initOrphanBranch(client, { owner, repo, branch });
   const existingFile = await getExistingFile(client, {
     owner,
     repo,
