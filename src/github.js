@@ -18,12 +18,36 @@ async function createOrphanBranch(client, { owner, repo, branch }) {
   });
 }
 
-async function initOrphanBranch(client, { owner, repo, branch }) {
-  console.log("initOrphanBranch");
+async function orphanBranchExists(client, { owner, repo, branch }) {
+  console.log("orphanBranchExists");
   try {
     await client.rest.repos.getBranch({ owner, repo, branch });
+    return true;
   } catch (e) {
-    await createOrphanBranch(client, { owner, repo, branch });
+    return false;
+  }
+}
+
+async function initOrphanBranch(client, { owner, repo, branch }) {
+  console.log("initOrphanBranch");
+  let exists = false;
+  let i = 0;
+  while (!exists) {
+    console.log(i);
+    exists = await orphanBranchExists(client, { owner, repo, branch });
+    console.log(exists);
+    if (exists) {
+      break;
+    }
+    try {
+      await createOrphanBranch(client, { owner, repo, branch });
+      break;
+    } catch (e) {
+      if (i >= 4) {
+        throw e;
+      }
+    }
+    i++;
   }
 }
 
