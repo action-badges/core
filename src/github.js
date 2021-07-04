@@ -3,6 +3,7 @@
 async function createOrphanBranch(client, { owner, repo, branch }) {
   console.log("createOrphanBranch");
   const SHA1_EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
+  console.log(SHA1_EMPTY_TREE);
   const res1 = await client.request("POST /repos/{owner}/{repo}/git/commits", {
     owner,
     repo,
@@ -10,14 +11,14 @@ async function createOrphanBranch(client, { owner, repo, branch }) {
     tree: SHA1_EMPTY_TREE,
     parents: [],
   });
-  console.log(res1)
+  console.log(res1);
   const res2 = await client.request("POST /repos/{owner}/{repo}/git/refs", {
     owner,
     repo,
     ref: `refs/heads/${branch}`,
-    sha: res.data.sha,
+    sha: res1.data.sha,
   });
-  console.log(res2)
+  console.log(res2);
 }
 
 async function orphanBranchExists(client, { owner, repo, branch }) {
