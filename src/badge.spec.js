@@ -13,16 +13,13 @@ describe("getBadgeObject", function () {
   });
 
   it("returns default object with no env or function inputs", function () {
-    assert.deepStrictEqual(
-      {
-        label: undefined,
-        labelColor: "#555",
-        message: "message",
-        messageColor: "blue",
-        style: "flat",
-      },
-      getBadgeObject({})
-    );
+    assert.deepStrictEqual(getBadgeObject({}), {
+      label: undefined,
+      labelColor: "#555",
+      message: "message",
+      messageColor: "blue",
+      style: "flat",
+    });
   });
 
   it("overrides defaults with env inputs", function () {
@@ -32,34 +29,31 @@ describe("getBadgeObject", function () {
     process.env["INPUT_MESSAGE-COLOR"] = "green";
     process.env["INPUT_STYLE"] = "for-the-badge";
 
-    assert.deepStrictEqual(
-      {
-        label: "label",
-        labelColor: "black",
-        message: "foobar",
-        messageColor: "green",
-        style: "for-the-badge",
-      },
-      getBadgeObject({})
-    );
+    assert.deepStrictEqual(getBadgeObject({}), {
+      label: "label",
+      labelColor: "black",
+      message: "foobar",
+      messageColor: "green",
+      style: "for-the-badge",
+    });
   });
 
   it("overrides defaults with function inputs", function () {
     assert.deepStrictEqual(
-      {
-        label: "label",
-        labelColor: "black",
-        message: "foobar",
-        messageColor: "green",
-        style: "for-the-badge",
-      },
       getBadgeObject({
         label: "label",
         labelColor: "black",
         message: "foobar",
         messageColor: "green",
         style: "for-the-badge",
-      })
+      }),
+      {
+        label: "label",
+        labelColor: "black",
+        message: "foobar",
+        messageColor: "green",
+        style: "for-the-badge",
+      }
     );
   });
 
@@ -71,36 +65,33 @@ describe("getBadgeObject", function () {
     process.env["INPUT_STYLE"] = "for-the-badge";
 
     assert.deepStrictEqual(
-      {
-        label: "env-label",
-        labelColor: "black",
-        message: "env-foobar",
-        messageColor: "green",
-        style: "for-the-badge",
-      },
       getBadgeObject({
         label: "fn-label",
         labelColor: "white",
         message: "fn-foobar",
         messageColor: "red",
         style: "social",
-      })
+      }),
+      {
+        label: "env-label",
+        labelColor: "black",
+        message: "env-foobar",
+        messageColor: "green",
+        style: "for-the-badge",
+      }
     );
   });
 
   it("overrides defaults with mixed inputs", function () {
     process.env["INPUT_LABEL"] = "label";
 
-    assert.deepStrictEqual(
-      {
-        label: "label",
-        labelColor: "#555",
-        message: "message",
-        messageColor: "blue",
-        style: "for-the-badge",
-      },
-      getBadgeObject({ style: "for-the-badge" })
-    );
+    assert.deepStrictEqual(getBadgeObject({ style: "for-the-badge" }), {
+      label: "label",
+      labelColor: "#555",
+      message: "message",
+      messageColor: "blue",
+      style: "for-the-badge",
+    });
   });
 });
 

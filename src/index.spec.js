@@ -74,8 +74,8 @@ describe("invoke", function () {
 
     await invoke(GoodTestAction);
 
-    assert.strictEqual(2, getDefaultBranch.callCount);
-    assert.strictEqual(2, writeFileToRepo.callCount);
+    assert.strictEqual(getDefaultBranch.callCount, 2);
+    assert.strictEqual(writeFileToRepo.callCount, 2);
     assert(setFailed.calledOnce);
   });
 
@@ -97,10 +97,10 @@ describe("invoke", function () {
     assert(setFailed.notCalled);
 
     const args = writeFileToRepo.args[0][1];
-    assert.strictEqual("owner", args.owner);
-    assert.strictEqual("repo", args.repo);
-    assert.strictEqual(".badges/badge.svg", args.path);
-    assert.strictEqual("main", args.branch);
+    assert.strictEqual(args.owner, "owner");
+    assert.strictEqual(args.repo, "repo");
+    assert.strictEqual(args.path, ".badges/badge.svg");
+    assert.strictEqual(args.branch, "main");
     assert.match(args.content, /^[a-zA-Z0-9+/\r\n]+={0,2}$/);
 
     assert(logs.includes("Wrote .badges/badge.svg"));
@@ -132,8 +132,8 @@ describe("invoke", function () {
 
     const args = writeFileToRepo.args[0][1];
 
-    assert.strictEqual(".badges/main/badge.svg", args.path);
-    assert.strictEqual("badge-branch", args.branch);
+    assert.strictEqual(args.path, ".badges/main/badge.svg");
+    assert.strictEqual(args.branch, "badge-branch");
 
     assert(logs.includes("Wrote .badges/main/badge.svg"));
     assert(

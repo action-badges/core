@@ -11,12 +11,12 @@ describe("getBranch", function () {
 
   it("returns a branch if ref is a head", function () {
     process.env["GITHUB_REF"] = "refs/heads/main";
-    assert.strictEqual("main", getBranch());
+    assert.strictEqual(getBranch(), "main");
   });
 
   it("doesn't return a branch if ref is a tag", function () {
     process.env["GITHUB_REF"] = "refs/tags/v1.0";
-    assert.strictEqual("", getBranch());
+    assert.strictEqual(getBranch(), "");
   });
 });
 
@@ -33,14 +33,14 @@ describe("writeFileToRepo", function () {
     };
 
     assert.strictEqual(
-      true,
       await writeFileToRepo(client, {
         owner: "owner",
         repo: "repo",
         content: "PHN2Zy4uLg==",
         path: "/path/to/file",
         branch: "main",
-      })
+      }),
+      true
     );
 
     assert(
@@ -65,14 +65,14 @@ describe("writeFileToRepo", function () {
     };
 
     assert.strictEqual(
-      true,
       await writeFileToRepo(client, {
         owner: "owner",
         repo: "repo",
         content: "PHN2Zy4uLg==",
         path: "/path/to/file",
         branch: "main",
-      })
+      }),
+      true
     );
 
     assert(
@@ -98,14 +98,14 @@ describe("writeFileToRepo", function () {
     };
 
     assert.strictEqual(
-      false,
       await writeFileToRepo(client, {
         owner: "owner",
         repo: "repo",
         content: "PHN2Zy4uLg==",
         path: "/path/to/file",
         branch: "main",
-      })
+      }),
+      false
     );
 
     assert(createOrUpdateFileContents.notCalled);
