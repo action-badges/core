@@ -1,5 +1,10 @@
 # Changelog
 
+## 📦 0.2.1
+
+* Update documentation
+* Update packages
+
 ## 📦 0.2.0
 
 * Allow implementations of `BaseAction` to declare they do not want to
