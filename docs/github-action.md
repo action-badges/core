@@ -6,15 +6,13 @@ Example:
 name: Generate Badges
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       # badges can use static values
       - name: Make Black Code Style badge
@@ -66,18 +64,49 @@ These parameters are available when using action-badges/core as a yaml workflow.
 
 ## Storing your badges
 
-By default badges are saved to your default branch (usually main or master). This can be configured using the `badge-branch` parameter. To keep your default branch's history clean you can store your badges on an [orphan branch](https://git-scm.com/docs/git-checkout#Documentation/git-checkout.txt---orphanltnewbranchgt). To initialize a new orphan branch:
+If the `badge-branch` param is not specified, badges will be saved to your default branch (usually `main` or `master`). To keep your default branch's history clean the recommended usage pattern is to store your badges on an [orphan branch](https://git-scm.com/docs/git-checkout#Documentation/git-checkout.txt---orphanltnewbranchgt). You can initialize this yourself but the easiest way to create ensure an orphan branch exists is to use the [create-orphan-branch action](https://github.com/action-badges/create-orphan-branch). For example:
+
+
+```yaml
+name: Generate Badges
+on:
+  issues:
+    types: [opened, edited, deleted, transferred, closed, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: action-badges/create-orphan-branch@0.1.0
+        with:
+          branch-name: badges
+
+      - name: Make Open Issues badge
+        uses: action-badges/core@0.2.0
+        with:
+          label: open issues
+          message: "${{ github.event.repository.open_issues }}"
+          message-color: ${{ github.event.repository.open_issues == 0 && 'yellow' || 'brightgreen' }}
+          file-name: open-issues.svg
+          badge-branch: badges
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+```
+
+
+To create an orphan branch manually:
 
 ```
 git checkout --orphan badges
 git rm -rf .
+rm -f .gitignore
 echo '# Badges' > README.md
 git add README.md
 git commit -m 'init'
 git push origin badges
 ```
 
-Badges can now be saved on the new orphan branch by setting
+Having created an orphan branch, badges can now be saved on the new orphan branch by setting
 
 ```yml
 badge-branch: badges
