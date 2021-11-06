@@ -1,5 +1,10 @@
 # Changelog
 
+## 📦 0.2.2
+
+* Update documentation
+* Update packages
+
 ## 📦 0.2.1
 
 * Update documentation
