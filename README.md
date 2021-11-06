@@ -17,7 +17,9 @@ Unlike centralized services like [shields.io](https://shields.io/) and [badgen.n
 - Make badges that are slow to compute or rely on data that is not available from a HTTP API
 - Generate badges without contacting any external services: compute is handled by github actions, badges are stored in github repo
 
-There are two ways to use action-badges/core. It can be used directly as a Github Action to generate badges with yaml workflows or as an NPM library to create re-usable javascript actions.
+There are two ways to use action-badges/core. It can be used directly as a Github Action in yaml workflows/composite actions or as an NPM library to create re-usable javascript actions.
 
 - [Github Action](https://github.com/action-badges/core/blob/main/docs/github-action.md)
 - [NPM Package](https://github.com/action-badges/core/blob/main/docs/npm-package.md)
+
+https://github.com/action-badges/examples contains some examples showing how to generate action badges using a number of different methods.

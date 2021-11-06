@@ -38,7 +38,7 @@ jobs:
 
 ## Parameters
 
-These parameters are available when using action-badges/core as a yaml workflow. They are also inherited by all javascript actions based on action-badges/core.
+These parameters are available when using action-badges/core in a yaml workflow or composite action. They are also inherited by all javascript actions based on action-badges/core.
 
 ### Action Parameters
 
@@ -112,7 +112,7 @@ Having created an orphan branch, badges can now be saved on the new orphan branc
 badge-branch: badges
 ```
 
-in your workflow yaml.
+in your workflow or action yaml.
 
 ## Embedding badges in your README
 
