@@ -6,7 +6,7 @@ const { makeBadge } = require("badge-maker");
 function merge(...objects) {
   objects.slice(1).forEach(function (obj) {
     Object.keys(obj).forEach(
-      (key) => obj[key] === undefined && delete obj[key]
+      (key) => obj[key] === undefined && delete obj[key],
     );
   });
   return Object.assign(...objects);
