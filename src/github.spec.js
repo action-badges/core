@@ -40,7 +40,7 @@ describe("writeFileToRepo", function () {
         path: "/path/to/file",
         branch: "main",
       }),
-      true
+      true,
     );
 
     assert(
@@ -51,7 +51,7 @@ describe("writeFileToRepo", function () {
         content: "PHN2Zy4uLg==",
         path: "/path/to/file",
         branch: "main",
-      })
+      }),
     );
   });
 
@@ -72,7 +72,7 @@ describe("writeFileToRepo", function () {
         path: "/path/to/file",
         branch: "main",
       }),
-      true
+      true,
     );
 
     assert(
@@ -84,7 +84,7 @@ describe("writeFileToRepo", function () {
         content: "PHN2Zy4uLg==",
         path: "/path/to/file",
         branch: "main",
-      })
+      }),
     );
   });
 
@@ -105,7 +105,7 @@ describe("writeFileToRepo", function () {
         path: "/path/to/file",
         branch: "main",
       }),
-      false
+      false,
     );
 
     assert(createOrUpdateFileContents.notCalled);

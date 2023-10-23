@@ -53,7 +53,7 @@ describe("getBadgeObject", function () {
         message: "foobar",
         messageColor: "green",
         style: "for-the-badge",
-      }
+      },
     );
   });
 
@@ -78,7 +78,7 @@ describe("getBadgeObject", function () {
         message: "env-foobar",
         messageColor: "green",
         style: "for-the-badge",
-      }
+      },
     );
   });
 

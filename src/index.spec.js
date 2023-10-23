@@ -106,8 +106,8 @@ describe("invoke", function () {
     assert(logs.includes("Wrote .badges/badge.svg"));
     assert(
       logs.includes(
-        "![build](https://raw.githubusercontent.com/owner/repo/main/.badges/badge.svg)"
-      )
+        "![build](https://raw.githubusercontent.com/owner/repo/main/.badges/badge.svg)",
+      ),
     );
   });
 
@@ -138,8 +138,8 @@ describe("invoke", function () {
     assert(logs.includes("Wrote .badges/main/badge.svg"));
     assert(
       logs.includes(
-        "![build](https://raw.githubusercontent.com/owner/repo/badge-branch/.badges/main/badge.svg)"
-      )
+        "![build](https://raw.githubusercontent.com/owner/repo/badge-branch/.badges/main/badge.svg)",
+      ),
     );
   });
 
