@@ -29,5 +29,5 @@ inputs:
     description: "One of: 'flat', 'flat-square', 'plastic', 'for-the-badge' or 'social'"
     required: false
 runs:
-  using: 'node12'
+  using: 'node20'
   main: 'dist/index.js'
