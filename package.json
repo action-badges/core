@@ -8,8 +8,8 @@
     "lint": "eslint \"src/**/*.js\"",
     "prettier": "prettier --write \"src/**/*.js\"",
     "prettier:check": "prettier --check \"src/**/*.js\"",
-    "test": "nyc --reporter=text mocha \"src/**/*.spec.js\"",
-    "coverage": "nyc report --reporter=cobertura"
+    "test": "c8 --reporter=text mocha \"src/**/*.spec.js\"",
+    "coverage": "c8 report --reporter=cobertura"
   },
   "repository": {
     "type": "git",
@@ -25,16 +25,17 @@
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.1",
+    "c8": "^8.0.1",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-mocha": "^10.2.0",
     "eslint-plugin-prettier": "^5.0.1",
     "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
     "prettier": "^3.0.3",
     "sinon": "^17.0.0"
   },
   "engines": {
-    "node": ">= 12"
-  }
+    "node": ">= 20"
+  },
+  "type": "module"
 }

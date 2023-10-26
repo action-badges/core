@@ -1,8 +1,6 @@
-"use strict";
-
-const assert = require("assert");
-const sinon = require("sinon");
-const { getBranch, writeFileToRepo } = require("./github");
+import assert from "assert";
+import sinon from "sinon";
+import { getBranch, writeFileToRepo } from "./github.js";
 
 describe("getBranch", function () {
   afterEach(function () {

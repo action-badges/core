@@ -1,7 +1,5 @@
-"use strict";
-
-const assert = require("assert");
-const { getBadgeObject, getBadgeSvg } = require("./badge");
+import assert from "assert";
+import { getBadgeObject, getBadgeSvg } from "./badge.js";
 
 describe("getBadgeObject", function () {
   afterEach(function () {

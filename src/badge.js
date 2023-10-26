@@ -1,7 +1,5 @@
-"use strict";
-
-const core = require("@actions/core");
-const { makeBadge } = require("badge-maker");
+import core from "@actions/core";
+import { makeBadge } from "badge-maker";
 
 function merge(...objects) {
   objects.slice(1).forEach(function (obj) {
@@ -49,7 +47,4 @@ function getBadgeSvg({ label, labelColor, message, messageColor, style }) {
   return makeBadge(badge);
 }
 
-module.exports = {
-  getBadgeObject,
-  getBadgeSvg,
-};
+export { getBadgeObject, getBadgeSvg };
