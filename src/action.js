@@ -1,6 +1,4 @@
-"use strict";
-
-const { BaseAction, invoke } = require("./index");
+import { BaseAction, invoke } from "./index.js";
 
 class StaticAction extends BaseAction {
   async render() {

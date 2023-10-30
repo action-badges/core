@@ -1,5 +1,3 @@
-"use strict";
-
 function getBranch() {
   try {
     const ref = process.env.GITHUB_REF;
@@ -59,8 +57,4 @@ async function writeFileToRepo(client, { owner, repo, content, path, branch }) {
   return false;
 }
 
-module.exports = {
-  getBranch,
-  getDefaultBranch,
-  writeFileToRepo,
-};
+export default { getBranch, getDefaultBranch, writeFileToRepo };

@@ -1,9 +1,7 @@
-"use strict";
-
-const core = require("@actions/core");
-const github = require("@actions/github");
-const { getBadgeObject, getBadgeSvg } = require("./badge");
-const githubHelper = require("./github");
+import core from "@actions/core";
+import github from "@actions/github";
+import { getBadgeObject, getBadgeSvg } from "./badge.js";
+import githubHelper from "./github.js";
 
 async function writeBadge(params) {
   const badgeObj = getBadgeObject(params);
@@ -85,7 +83,4 @@ async function invoke(Cls) {
   }
 }
 
-module.exports = {
-  BaseAction,
-  invoke,
-};
+export { BaseAction, invoke };

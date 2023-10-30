@@ -4,6 +4,7 @@
 npm install @action-badges/core
 ```
 
+- `@action-badges/core` is an ESModule
 - `@action-badges/core` may be used to create a re-usable javascript action.
 - Badges are defined by creating a class which extends `BaseAction` and run using `invoke()`.
 - Classes extending `BaseAction` must implement `async render()`.
@@ -17,7 +18,7 @@ npm install @action-badges/core
 ```js
 "use strict";
 
-const { BaseAction, invoke } = require("@action-badges/core");
+import { BaseAction, invoke } from "@action-badges/core";
 
 class BlackCodeStyle extends BaseAction {
   get label() {

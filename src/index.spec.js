@@ -1,10 +1,8 @@
-"use strict";
-
-const assert = require("assert");
-const core = require("@actions/core");
-const sinon = require("sinon");
-const github = require("./github");
-const { BaseAction, invoke } = require("./index");
+import assert from "assert";
+import core from "@actions/core";
+import sinon from "sinon";
+import github from "./github.js";
+import { BaseAction, invoke } from "./index.js";
 
 class GoodTestAction extends BaseAction {
   get label() {
