@@ -18,6 +18,11 @@
   "homepage": "https://github.com/action-badges/core",
   "author": "chris48s",
   "license": "MIT",
+  "files": [
+    "src/**/!(*.spec).js",
+    "CHANGELOG.md",
+    "docs/*"
+  ],
   "dependencies": {
     "@actions/core": "^1.2.7",
     "@actions/github": "^6.0.0",
