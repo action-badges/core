@@ -57,4 +57,4 @@ async function writeFileToRepo(client, { owner, repo, content, path, branch }) {
   return false;
 }
 
-export { getBranch, getDefaultBranch, writeFileToRepo };
+export default { getBranch, getDefaultBranch, writeFileToRepo };

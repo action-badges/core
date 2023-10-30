@@ -1,7 +1,7 @@
 import assert from "assert";
 import core from "@actions/core";
 import sinon from "sinon";
-import * as github from "./github.js";
+import github from "./github.js";
 import { BaseAction, invoke } from "./index.js";
 
 class GoodTestAction extends BaseAction {

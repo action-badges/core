@@ -1,6 +1,6 @@
 import assert from "assert";
 import sinon from "sinon";
-import { getBranch, writeFileToRepo } from "./github.js";
+import github from "./github.js";
 
 describe("getBranch", function () {
   afterEach(function () {
@@ -9,12 +9,12 @@ describe("getBranch", function () {
 
   it("returns a branch if ref is a head", function () {
     process.env["GITHUB_REF"] = "refs/heads/main";
-    assert.strictEqual(getBranch(), "main");
+    assert.strictEqual(github.getBranch(), "main");
   });
 
   it("doesn't return a branch if ref is a tag", function () {
     process.env["GITHUB_REF"] = "refs/tags/v1.0";
-    assert.strictEqual(getBranch(), "");
+    assert.strictEqual(github.getBranch(), "");
   });
 });
 
@@ -31,7 +31,7 @@ describe("writeFileToRepo", function () {
     };
 
     assert.strictEqual(
-      await writeFileToRepo(client, {
+      await github.writeFileToRepo(client, {
         owner: "owner",
         repo: "repo",
         content: "PHN2Zy4uLg==",
@@ -63,7 +63,7 @@ describe("writeFileToRepo", function () {
     };
 
     assert.strictEqual(
-      await writeFileToRepo(client, {
+      await github.writeFileToRepo(client, {
         owner: "owner",
         repo: "repo",
         content: "PHN2Zy4uLg==",
@@ -96,7 +96,7 @@ describe("writeFileToRepo", function () {
     };
 
     assert.strictEqual(
-      await writeFileToRepo(client, {
+      await github.writeFileToRepo(client, {
         owner: "owner",
         repo: "repo",
         content: "PHN2Zy4uLg==",

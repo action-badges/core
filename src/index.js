@@ -1,7 +1,7 @@
 import core from "@actions/core";
 import github from "@actions/github";
 import { getBadgeObject, getBadgeSvg } from "./badge.js";
-import * as githubHelper from "./github.js";
+import githubHelper from "./github.js";
 
 async function writeBadge(params) {
   const badgeObj = getBadgeObject(params);
