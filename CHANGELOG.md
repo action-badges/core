@@ -1,5 +1,11 @@
 # Changelog
 
+## 📦 0.3.0
+
+- **Breaking**: Switch NPM package from CommonJS to ESModules
+- **Breaking**: GitHub action now runs on `node20` runtime
+- **Breaking**: Drop compatibility with node < 20
+
 ## 📦 0.2.2
 
 * Update documentation
