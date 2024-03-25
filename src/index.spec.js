@@ -42,19 +42,19 @@ describe("invoke", function () {
   it("throws an exception if class is not instance of BaseAction", async function () {
     class BadTestAction {}
 
-    await assert.rejects(invoke(BadTestAction), {
-      name: "Error",
-      message: "Action class must extend BaseAction",
-    });
+    const setFailed = sinon.spy(core, "setFailed");
+    await invoke(BadTestAction);
+    assert(setFailed.calledOnce);
+    assert(setFailed.calledWith("Action class must extend BaseAction"));
   });
 
   it("throws an exception if class has no render() function", async function () {
     class BadTestAction extends BaseAction {}
 
-    await assert.rejects(invoke(BadTestAction), {
-      name: "Error",
-      message: "render not implemented",
-    });
+    const setFailed = sinon.spy(core, "setFailed");
+    await invoke(BadTestAction);
+    assert(setFailed.calledOnce);
+    assert(setFailed.calledWith("render not implemented"));
   });
 
   it("fails the build if writeBadge throws an error", async function () {

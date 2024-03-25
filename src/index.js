@@ -61,13 +61,20 @@ async function invoke(Cls) {
     core.setFailed(reason);
   });
 
-  if (!(Cls.prototype instanceof BaseAction)) {
-    throw new Error("Action class must extend BaseAction");
-  }
+  let obj;
+  let rendered;
+  try {
+    if (!(Cls.prototype instanceof BaseAction)) {
+      throw new Error("Action class must extend BaseAction");
+    }
 
-  const obj = new Cls();
-  const rendered = await obj.render();
-  if (rendered == null) {
+    obj = new Cls();
+    rendered = await obj.render();
+    if (rendered == null) {
+      return;
+    }
+  } catch (e) {
+    core.setFailed(e.message);
     return;
   }
 
