@@ -1,5 +1,9 @@
 # Changelog
 
+## 📦 0.3.1
+
+- Error handling improvements
+
 ## 📦 0.3.0
 
 - **Breaking**: Switch NPM package from CommonJS to ESModules
