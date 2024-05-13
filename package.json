@@ -5,9 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "build": "ncc build src/action.js -o dist --minify",
-    "lint": "eslint \"src/**/*.js\"",
-    "prettier": "prettier --write \"src/**/*.js\"",
-    "prettier:check": "prettier --check \"src/**/*.js\"",
+    "lint": "eslint \"**/*.{js,cjs}\"",
+    "prettier": "prettier --write \"**/*.{js,cjs}\"",
+    "prettier:check": "prettier --check \"**/*.{js,cjs}\"",
     "test": "c8 --reporter=text mocha \"src/**/*.spec.js\"",
     "coverage": "c8 report --reporter=cobertura"
   },

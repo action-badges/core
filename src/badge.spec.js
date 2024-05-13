@@ -93,7 +93,7 @@ describe("getBadgeObject", function () {
   });
 });
 
-describe("getBadgeObject", function () {
+describe("getBadgeSvg", function () {
   it("renders a SVG", function () {
     const svg = getBadgeSvg({
       message: "foobar",
