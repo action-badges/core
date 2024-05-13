@@ -16,8 +16,8 @@ class GoodTestAction extends BaseAction {
 describe("invoke", function () {
   let logs = [];
   const mockedWrite = (output) => logs.push(output);
-  const originalConsoleLog = console.log;
-  const originalCoreInfo = core.info;
+  const originalConsoleLog = console.log; // eslint-disable-line mocha/no-setup-in-describe
+  const originalCoreInfo = core.info; // eslint-disable-line mocha/no-setup-in-describe
 
   beforeEach(function () {
     logs = [];

@@ -5,7 +5,7 @@ function getBranch() {
       return ref.split("/").slice(2).join("/");
     }
     return "";
-  } catch (e) {
+  } catch {
     return "";
   }
 }
@@ -31,7 +31,7 @@ async function getExistingFile(client, { owner, repo, path, branch }) {
       sha: resp.data.sha,
       content: resp.data.content.replace(/\n/g, ""),
     };
-  } catch (e) {
+  } catch {
     return { exists: false, sha: null, content: null };
   }
 }
