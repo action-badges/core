@@ -1,12 +1,12 @@
-const globals = require("globals");
-const js = require("@eslint/js");
-const prettierConfig = require("eslint-config-prettier");
-const prettierPlugin = require("eslint-plugin-prettier");
-const mochaPlugin = require("eslint-plugin-mocha");
+import globals from "globals";
+import js from "@eslint/js";
+import prettierConfig from "eslint-config-prettier";
+import prettierPlugin from "eslint-plugin-prettier";
+import mochaPlugin from "eslint-plugin-mocha";
 
-module.exports = [
+const config = [
   js.configs.recommended,
-  mochaPlugin.configs.flat.recommended,
+  mochaPlugin.configs.recommended,
   prettierConfig,
   {
     ignores: ["dist"],
@@ -26,10 +26,12 @@ module.exports = [
     },
     rules: {
       "prettier/prettier": ["error"],
-      "mocha/no-skipped-tests": ["error"],
+      "mocha/no-pending-tests": ["error"],
       "mocha/no-exclusive-tests": ["error"],
       "mocha/max-top-level-suites": ["off"],
       "no-unused-vars": ["error", { args: "none" }],
     },
   },
 ];
+
+export default config;
