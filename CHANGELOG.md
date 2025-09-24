@@ -1,5 +1,10 @@
 # Changelog
 
+## 📦 0.4.0
+
+- **Breaking**: GitHub action now runs on `node24` runtime
+- **Breaking**: Drop compatibility with node < 24
+
 ## 📦 0.3.1
 
 - Error handling improvements
