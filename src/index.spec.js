@@ -1,35 +1,56 @@
 import assert from "assert";
-import core from "@actions/core";
-import sinon from "sinon";
+import * as core from "@actions/core";
+import esmock from "esmock";
 import github from "./github.js";
-import { BaseAction, invoke } from "./index.js";
-
-class GoodTestAction extends BaseAction {
-  get label() {
-    return "build";
-  }
-  render() {
-    return { message: "passing" };
-  }
-}
+import sinon from "sinon";
 
 describe("invoke", function () {
   let logs = [];
-  const mockedWrite = (output) => logs.push(output);
+  let invoke;
+  let BaseAction;
+  let mockCore;
+  let mockGithub;
   const originalConsoleLog = console.log; // eslint-disable-line mocha/no-setup-in-describe
-  const originalCoreInfo = core.info; // eslint-disable-line mocha/no-setup-in-describe
+
+  function createGoodTestAction() {
+    return class GoodTestAction extends BaseAction {
+      get label() {
+        return "build";
+      }
+      render() {
+        return { message: "passing" };
+      }
+    };
+  }
+
+  async function setup() {
+    mockCore = {
+      ...core,
+      info: (output) => logs.push(output),
+      setFailed: sinon.stub(),
+    };
+
+    mockGithub = {
+      ...github,
+      getDefaultBranch: sinon.stub(),
+      writeFileToRepo: sinon.stub(),
+      getBranch: sinon.stub().returns(""),
+    };
+
+    ({ invoke, BaseAction } = await esmock("./index.js", {
+      "@actions/core": mockCore,
+      "./github.js": { default: mockGithub },
+    }));
+  }
 
   beforeEach(function () {
     logs = [];
-    console.log = mockedWrite;
-    core.info = mockedWrite;
+    console.log = (output) => logs.push(output);
   });
 
   afterEach(function () {
     logs = [];
     console.log = originalConsoleLog;
-    core.info = originalCoreInfo;
-
     sinon.restore();
 
     delete process.env["INPUT_BADGE-BRANCH"];
@@ -40,61 +61,60 @@ describe("invoke", function () {
   });
 
   it("throws an exception if class is not instance of BaseAction", async function () {
+    await setup();
     class BadTestAction {}
 
-    const setFailed = sinon.spy(core, "setFailed");
     await invoke(BadTestAction);
-    assert(setFailed.calledOnce);
-    assert(setFailed.calledWith("Action class must extend BaseAction"));
+    assert(mockCore.setFailed.calledOnce);
+    assert(
+      mockCore.setFailed.calledWith("Action class must extend BaseAction"),
+    );
   });
 
   it("throws an exception if class has no render() function", async function () {
+    await setup();
     class BadTestAction extends BaseAction {}
 
-    const setFailed = sinon.spy(core, "setFailed");
     await invoke(BadTestAction);
-    assert(setFailed.calledOnce);
-    assert(setFailed.calledWith("render not implemented"));
+    assert(mockCore.setFailed.calledOnce);
+    assert(mockCore.setFailed.calledWith("render not implemented"));
   });
 
   it("fails the build if writeBadge throws an error", async function () {
     process.env["INPUT_GITHUB-TOKEN"] = "f00ba2";
     process.env["INPUT_FILE-NAME"] = "badge.svg";
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
+    await setup();
 
-    const getDefaultBranch = sinon
-      .stub(github, "getDefaultBranch")
-      .returns("main");
-    const writeFileToRepo = sinon.stub(github, "writeFileToRepo");
-    writeFileToRepo.onCall(0).throws();
-    writeFileToRepo.onCall(1).returns(true);
-    const setFailed = sinon.spy(core, "setFailed");
+    mockGithub.getDefaultBranch.returns("main");
+    mockGithub.writeFileToRepo.onCall(0).throws();
+    mockGithub.writeFileToRepo.onCall(1).returns(true);
 
+    const GoodTestAction = createGoodTestAction();
     await invoke(GoodTestAction);
 
-    assert.strictEqual(getDefaultBranch.callCount, 2);
-    assert.strictEqual(writeFileToRepo.callCount, 2);
-    assert(setFailed.calledOnce);
+    assert.strictEqual(mockGithub.getDefaultBranch.callCount, 2);
+    assert.strictEqual(mockGithub.writeFileToRepo.callCount, 2);
+    assert(mockCore.setFailed.calledOnce);
   });
 
   it("writes a badge", async function () {
     process.env["INPUT_GITHUB-TOKEN"] = "f00ba2";
     process.env["INPUT_FILE-NAME"] = "badge.svg";
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
+    await setup();
 
-    const getDefaultBranch = sinon
-      .stub(github, "getDefaultBranch")
-      .returns("main");
-    const writeFileToRepo = sinon.stub(github, "writeFileToRepo").returns(true);
-    const setFailed = sinon.spy(core, "setFailed");
+    mockGithub.getDefaultBranch.returns("main");
+    mockGithub.writeFileToRepo.returns(true);
 
+    const GoodTestAction = createGoodTestAction();
     await invoke(GoodTestAction);
 
-    assert(getDefaultBranch.calledOnce);
-    assert(writeFileToRepo.calledOnce);
-    assert(setFailed.notCalled);
+    assert(mockGithub.getDefaultBranch.calledOnce);
+    assert(mockGithub.writeFileToRepo.calledOnce);
+    assert(mockCore.setFailed.notCalled);
 
-    const args = writeFileToRepo.args[0][1];
+    const args = mockGithub.writeFileToRepo.args[0][1];
     assert.strictEqual(args.owner, "owner");
     assert.strictEqual(args.repo, "repo");
     assert.strictEqual(args.path, ".badges/badge.svg");
@@ -115,20 +135,20 @@ describe("invoke", function () {
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
     process.env["INPUT_BADGE-BRANCH"] = "badge-branch";
     process.env["GITHUB_REF"] = "refs/heads/main";
+    await setup();
 
-    const getDefaultBranch = sinon
-      .stub(github, "getDefaultBranch")
-      .returns("main");
-    const writeFileToRepo = sinon.stub(github, "writeFileToRepo").returns(true);
-    const setFailed = sinon.spy(core, "setFailed");
+    mockGithub.getDefaultBranch.returns("main");
+    mockGithub.writeFileToRepo.returns(true);
+    mockGithub.getBranch.returns("main");
 
+    const GoodTestAction = createGoodTestAction();
     await invoke(GoodTestAction);
 
-    assert(getDefaultBranch.calledOnce);
-    assert(writeFileToRepo.calledOnce);
-    assert(setFailed.notCalled);
+    assert(mockGithub.getDefaultBranch.calledOnce);
+    assert(mockGithub.writeFileToRepo.calledOnce);
+    assert(mockCore.setFailed.notCalled);
 
-    const args = writeFileToRepo.args[0][1];
+    const args = mockGithub.writeFileToRepo.args[0][1];
 
     assert.strictEqual(args.path, ".badges/main/badge.svg");
     assert.strictEqual(args.branch, "badge-branch");
@@ -145,14 +165,16 @@ describe("invoke", function () {
     process.env["INPUT_GITHUB-TOKEN"] = "f00ba2";
     process.env["INPUT_FILE-NAME"] = "badge.svg";
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
+    await setup();
 
-    const getDefaultBranch = sinon
-      .stub(github, "getDefaultBranch")
-      .returns("main");
-    const writeFileToRepo = sinon.stub(github, "writeFileToRepo").returns(true);
-    const setFailed = sinon.spy(core, "setFailed");
+    mockGithub.getDefaultBranch.returns("main");
+    mockGithub.writeFileToRepo.returns(true);
 
-    [null, undefined].forEach(async function (value) {
+    for (const value of [null, undefined]) {
+      mockGithub.getDefaultBranch.resetHistory();
+      mockGithub.writeFileToRepo.resetHistory();
+      mockCore.setFailed.resetHistory();
+
       class NullTestAction extends BaseAction {
         get label() {
           return "build";
@@ -164,9 +186,9 @@ describe("invoke", function () {
 
       await invoke(NullTestAction);
 
-      assert(getDefaultBranch.notCalled);
-      assert(writeFileToRepo.notCalled);
-      assert(setFailed.notCalled);
-    });
+      assert(mockGithub.getDefaultBranch.notCalled);
+      assert(mockGithub.writeFileToRepo.notCalled);
+      assert(mockCore.setFailed.notCalled);
+    }
   });
 });
