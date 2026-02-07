@@ -24,8 +24,8 @@
     "docs/*"
   ],
   "dependencies": {
-    "@actions/core": "^2.0.1",
-    "@actions/github": "^6.0.0",
+    "@actions/core": "^3.0.0",
+    "@actions/github": "^9.0.0",
     "badge-maker": "^5.0.0"
   },
   "devDependencies": {
@@ -35,6 +35,7 @@
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-mocha": "^11.0.0",
     "eslint-plugin-prettier": "^5.0.1",
+    "esmock": "^2.7.3",
     "mocha": "^11.0.1",
     "prettier": "^3.0.3",
     "sinon": "^21.0.0"
