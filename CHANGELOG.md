@@ -1,5 +1,9 @@
 # Changelog
 
+## 📦 0.4.1
+
+- Upgraded version of @actions/core
+
 ## 📦 0.4.0
 
 - **Breaking**: GitHub action now runs on `node24` runtime
