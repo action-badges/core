@@ -1,4 +1,5 @@
-import assert from "assert";
+import assert from "node:assert";
+import { describe, it, afterEach } from "node:test";
 import { getBadgeObject, getBadgeSvg } from "./badge.js";
 
 describe("getBadgeObject", function () {

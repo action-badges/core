@@ -1,16 +1,34 @@
-import assert from "assert";
-import * as core from "@actions/core";
-import esmock from "esmock";
-import github from "./github.js";
-import sinon from "sinon";
+import assert from "node:assert";
+import { describe, it, afterEach, beforeEach, mock } from "node:test";
+import * as realCore from "@actions/core";
+
+const mockSetFailed = mock.fn();
+const mockInfo = mock.fn();
+const mockGetDefaultBranch = mock.fn();
+const mockWriteFileToRepo = mock.fn();
+const mockGetBranch = mock.fn(() => "");
+
+mock.module("@actions/core", {
+  namedExports: {
+    ...realCore,
+    info: mockInfo,
+    setFailed: mockSetFailed,
+  },
+});
+
+mock.module("./github.js", {
+  defaultExport: {
+    getDefaultBranch: mockGetDefaultBranch,
+    writeFileToRepo: mockWriteFileToRepo,
+    getBranch: mockGetBranch,
+  },
+});
+
+const { invoke, BaseAction } = await import("./index.js");
 
 describe("invoke", function () {
   let logs = [];
-  let invoke;
-  let BaseAction;
-  let mockCore;
-  let mockGithub;
-  const originalConsoleLog = console.log; // eslint-disable-line mocha/no-setup-in-describe
+  const originalConsoleLog = console.log;
 
   function createGoodTestAction() {
     return class GoodTestAction extends BaseAction {
@@ -23,35 +41,21 @@ describe("invoke", function () {
     };
   }
 
-  async function setup() {
-    mockCore = {
-      ...core,
-      info: (output) => logs.push(output),
-      setFailed: sinon.stub(),
-    };
-
-    mockGithub = {
-      ...github,
-      getDefaultBranch: sinon.stub(),
-      writeFileToRepo: sinon.stub(),
-      getBranch: sinon.stub().returns(""),
-    };
-
-    ({ invoke, BaseAction } = await esmock("./index.js", {
-      "@actions/core": mockCore,
-      "./github.js": { default: mockGithub },
-    }));
-  }
-
   beforeEach(function () {
     logs = [];
     console.log = (output) => logs.push(output);
+    mockSetFailed.mock.resetCalls();
+    mockInfo.mock.resetCalls();
+    mockInfo.mock.mockImplementation((output) => logs.push(output));
+    mockGetDefaultBranch.mock.resetCalls();
+    mockWriteFileToRepo.mock.resetCalls();
+    mockGetBranch.mock.resetCalls();
+    mockGetBranch.mock.mockImplementation(() => "");
   });
 
   afterEach(function () {
     logs = [];
     console.log = originalConsoleLog;
-    sinon.restore();
 
     delete process.env["INPUT_BADGE-BRANCH"];
     delete process.env["INPUT_FILE-NAME"];
@@ -61,60 +65,62 @@ describe("invoke", function () {
   });
 
   it("throws an exception if class is not instance of BaseAction", async function () {
-    await setup();
     class BadTestAction {}
 
     await invoke(BadTestAction);
-    assert(mockCore.setFailed.calledOnce);
-    assert(
-      mockCore.setFailed.calledWith("Action class must extend BaseAction"),
+    assert.strictEqual(mockSetFailed.mock.callCount(), 1);
+    assert.strictEqual(
+      mockSetFailed.mock.calls[0].arguments[0],
+      "Action class must extend BaseAction",
     );
   });
 
   it("throws an exception if class has no render() function", async function () {
-    await setup();
     class BadTestAction extends BaseAction {}
 
     await invoke(BadTestAction);
-    assert(mockCore.setFailed.calledOnce);
-    assert(mockCore.setFailed.calledWith("render not implemented"));
+    assert.strictEqual(mockSetFailed.mock.callCount(), 1);
+    assert.strictEqual(
+      mockSetFailed.mock.calls[0].arguments[0],
+      "render not implemented",
+    );
   });
 
   it("fails the build if writeBadge throws an error", async function () {
     process.env["INPUT_GITHUB-TOKEN"] = "f00ba2";
     process.env["INPUT_FILE-NAME"] = "badge.svg";
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
-    await setup();
 
-    mockGithub.getDefaultBranch.returns("main");
-    mockGithub.writeFileToRepo.onCall(0).throws();
-    mockGithub.writeFileToRepo.onCall(1).returns(true);
+    mockGetDefaultBranch.mock.mockImplementation(() => "main");
+    mockWriteFileToRepo.mock.mockImplementationOnce(() => {
+      throw new Error("error");
+    }, 0);
+    mockWriteFileToRepo.mock.mockImplementationOnce(() => true, 1);
 
     const GoodTestAction = createGoodTestAction();
     await invoke(GoodTestAction);
 
-    assert.strictEqual(mockGithub.getDefaultBranch.callCount, 2);
-    assert.strictEqual(mockGithub.writeFileToRepo.callCount, 2);
-    assert(mockCore.setFailed.calledOnce);
+    assert.strictEqual(mockGetDefaultBranch.mock.callCount(), 2);
+    assert.strictEqual(mockWriteFileToRepo.mock.callCount(), 2);
+    assert.strictEqual(mockSetFailed.mock.callCount(), 1);
   });
 
   it("writes a badge", async function () {
     process.env["INPUT_GITHUB-TOKEN"] = "f00ba2";
     process.env["INPUT_FILE-NAME"] = "badge.svg";
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
-    await setup();
 
-    mockGithub.getDefaultBranch.returns("main");
-    mockGithub.writeFileToRepo.returns(true);
+    mockGetDefaultBranch.mock.mockImplementation(() => "main");
+    mockWriteFileToRepo.mock.mockImplementation(() => true);
 
     const GoodTestAction = createGoodTestAction();
     await invoke(GoodTestAction);
 
-    assert(mockGithub.getDefaultBranch.calledOnce);
-    assert(mockGithub.writeFileToRepo.calledOnce);
-    assert(mockCore.setFailed.notCalled);
+    assert.strictEqual(mockGetDefaultBranch.mock.callCount(), 1);
+    assert.strictEqual(mockWriteFileToRepo.mock.callCount(), 1);
+    assert.strictEqual(mockSetFailed.mock.callCount(), 0);
 
-    const args = mockGithub.writeFileToRepo.args[0][1];
+    const args = mockWriteFileToRepo.mock.calls[0].arguments[1];
     assert.strictEqual(args.owner, "owner");
     assert.strictEqual(args.repo, "repo");
     assert.strictEqual(args.path, ".badges/badge.svg");
@@ -135,21 +141,19 @@ describe("invoke", function () {
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
     process.env["INPUT_BADGE-BRANCH"] = "badge-branch";
     process.env["GITHUB_REF"] = "refs/heads/main";
-    await setup();
 
-    mockGithub.getDefaultBranch.returns("main");
-    mockGithub.writeFileToRepo.returns(true);
-    mockGithub.getBranch.returns("main");
+    mockGetDefaultBranch.mock.mockImplementation(() => "main");
+    mockWriteFileToRepo.mock.mockImplementation(() => true);
+    mockGetBranch.mock.mockImplementation(() => "main");
 
     const GoodTestAction = createGoodTestAction();
     await invoke(GoodTestAction);
 
-    assert(mockGithub.getDefaultBranch.calledOnce);
-    assert(mockGithub.writeFileToRepo.calledOnce);
-    assert(mockCore.setFailed.notCalled);
+    assert.strictEqual(mockGetDefaultBranch.mock.callCount(), 1);
+    assert.strictEqual(mockWriteFileToRepo.mock.callCount(), 1);
+    assert.strictEqual(mockSetFailed.mock.callCount(), 0);
 
-    const args = mockGithub.writeFileToRepo.args[0][1];
-
+    const args = mockWriteFileToRepo.mock.calls[0].arguments[1];
     assert.strictEqual(args.path, ".badges/main/badge.svg");
     assert.strictEqual(args.branch, "badge-branch");
 
@@ -165,15 +169,14 @@ describe("invoke", function () {
     process.env["INPUT_GITHUB-TOKEN"] = "f00ba2";
     process.env["INPUT_FILE-NAME"] = "badge.svg";
     process.env["GITHUB_REPOSITORY"] = "owner/repo";
-    await setup();
 
-    mockGithub.getDefaultBranch.returns("main");
-    mockGithub.writeFileToRepo.returns(true);
+    mockGetDefaultBranch.mock.mockImplementation(() => "main");
+    mockWriteFileToRepo.mock.mockImplementation(() => true);
 
     for (const value of [null, undefined]) {
-      mockGithub.getDefaultBranch.resetHistory();
-      mockGithub.writeFileToRepo.resetHistory();
-      mockCore.setFailed.resetHistory();
+      mockGetDefaultBranch.mock.resetCalls();
+      mockWriteFileToRepo.mock.resetCalls();
+      mockSetFailed.mock.resetCalls();
 
       class NullTestAction extends BaseAction {
         get label() {
@@ -186,9 +189,9 @@ describe("invoke", function () {
 
       await invoke(NullTestAction);
 
-      assert(mockGithub.getDefaultBranch.notCalled);
-      assert(mockGithub.writeFileToRepo.notCalled);
-      assert(mockCore.setFailed.notCalled);
+      assert.strictEqual(mockGetDefaultBranch.mock.callCount(), 0);
+      assert.strictEqual(mockWriteFileToRepo.mock.callCount(), 0);
+      assert.strictEqual(mockSetFailed.mock.callCount(), 0);
     }
   });
 });

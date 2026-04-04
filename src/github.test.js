@@ -1,5 +1,5 @@
-import assert from "assert";
-import sinon from "sinon";
+import assert from "node:assert";
+import { describe, it, afterEach, mock } from "node:test";
 import github from "./github.js";
 
 describe("getBranch", function () {
@@ -20,12 +20,14 @@ describe("getBranch", function () {
 
 describe("writeFileToRepo", function () {
   afterEach(function () {
-    sinon.restore();
+    mock.restoreAll();
   });
 
   it("creates file if file does not exist", async function () {
-    const getContent = sinon.stub().throws();
-    const createOrUpdateFileContents = sinon.spy();
+    const getContent = mock.fn(() => {
+      throw new Error();
+    });
+    const createOrUpdateFileContents = mock.fn();
     const client = {
       rest: { repos: { getContent, createOrUpdateFileContents } },
     };
@@ -41,23 +43,25 @@ describe("writeFileToRepo", function () {
       true,
     );
 
-    assert(
-      createOrUpdateFileContents.calledWith({
+    assert.strictEqual(createOrUpdateFileContents.mock.calls.length, 1);
+    assert.deepStrictEqual(
+      createOrUpdateFileContents.mock.calls[0].arguments[0],
+      {
         message: "create /path/to/file",
         owner: "owner",
         repo: "repo",
         content: "PHN2Zy4uLg==",
         path: "/path/to/file",
         branch: "main",
-      }),
+      },
     );
   });
 
   it("updates file if file has changed", async function () {
-    const getContent = sinon
-      .stub()
-      .returns({ data: { sha: "abc123", content: "c29tZXRoaW5nIGVsc2U=" } });
-    const createOrUpdateFileContents = sinon.spy();
+    const getContent = mock.fn(() => ({
+      data: { sha: "abc123", content: "c29tZXRoaW5nIGVsc2U=" },
+    }));
+    const createOrUpdateFileContents = mock.fn();
     const client = {
       rest: { repos: { getContent, createOrUpdateFileContents } },
     };
@@ -73,8 +77,10 @@ describe("writeFileToRepo", function () {
       true,
     );
 
-    assert(
-      createOrUpdateFileContents.calledWith({
+    assert.strictEqual(createOrUpdateFileContents.mock.calls.length, 1);
+    assert.deepStrictEqual(
+      createOrUpdateFileContents.mock.calls[0].arguments[0],
+      {
         message: "update /path/to/file",
         sha: "abc123",
         owner: "owner",
@@ -82,15 +88,15 @@ describe("writeFileToRepo", function () {
         content: "PHN2Zy4uLg==",
         path: "/path/to/file",
         branch: "main",
-      }),
+      },
     );
   });
 
   it("does nothing if file has not changed", async function () {
-    const getContent = sinon
-      .stub()
-      .returns({ data: { sha: "abc123", content: "PHN2Zy4uLg==" } });
-    const createOrUpdateFileContents = sinon.spy();
+    const getContent = mock.fn(() => ({
+      data: { sha: "abc123", content: "PHN2Zy4uLg==" },
+    }));
+    const createOrUpdateFileContents = mock.fn();
     const client = {
       rest: { repos: { getContent, createOrUpdateFileContents } },
     };
@@ -106,6 +112,6 @@ describe("writeFileToRepo", function () {
       false,
     );
 
-    assert(createOrUpdateFileContents.notCalled);
+    assert.strictEqual(createOrUpdateFileContents.mock.calls.length, 0);
   });
 });
