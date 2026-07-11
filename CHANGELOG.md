@@ -1,5 +1,9 @@
 # Changelog
 
+## 📦 0.5.0
+
+- Adopt badge-maker 6.x: Generated badges have a new standard palette with higher text contrast
+
 ## 📦 0.4.1
 
 - Upgraded version of @actions/core
